@@ -7,10 +7,11 @@ from cloudinary.models import CloudinaryField
 
 class User(AbstractUser):
     ROLE_CHOICES = (
-        ('lecturer', 'Giảng Viên'),
-        ('student', 'Sinh Viên')
+        ('giảng viên', 'Giảng Viên'),
+        ('sinh viên', 'Sinh Viên')
     )
 
+    fullname = models.CharField(max_length=255)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
     avatar = CloudinaryField(null=True)
 
@@ -36,31 +37,39 @@ class Category(BaseModel):
         return self.name
 
 
-class Assessment(BaseModel):
-    name = models.CharField(max_length=50, unique=True)
-    weight = models.DecimalField(max_digits=3, decimal_places=2,
-                                 validators=[MinValueValidator(10), MaxValueValidator(100)])
-    description = RichTextField()
+class Course(BaseModel):
+    MODE_CHOICES = (
+        ('ftp', 'Trực tiếp'),
+        ('online', 'Trực tuyến'),
+        ('blended', 'Kết hợp')
+    )
+    name = models.CharField(max_length=100, unique=True)
+    category = models.ForeignKey(Category, on_delete=models.PROTECT)
+    delivery_mode = models.CharField(max_length=100, choices=MODE_CHOICES)
+    term = models.CharField(max_length=50)
 
     def __str__(self):
         return self.name
 
 
 class Outline(BaseModel):
-    name = models.CharField(max_length=100, unique=True)
+    title = models.CharField(max_length=100, unique=True)
     content = RichTextField()
     credit = models.PositiveSmallIntegerField()
-    assessments = models.ManyToManyField(Assessment)
     resource = RichTextField()
     lecturer = models.ForeignKey(User, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.name
+        return self.title
 
 
-class Course(BaseModel):
-    name = models.CharField(max_length=100, unique=True)
-    category = models.ForeignKey(Category, on_delete=models.PROTECT)
+class Assessment(BaseModel):
+    name = models.CharField(max_length=50, unique=True)
+    weight = models.DecimalField(max_digits=3, decimal_places=2,
+                                 validators=[MinValueValidator(10), MaxValueValidator(100)])
+    outcomes = RichTextField()
+    outline = models.ForeignKey(Outline, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
