@@ -66,8 +66,7 @@ class Outline(BaseModel):
 
 class Assessment(BaseModel):
     name = models.CharField(max_length=50, unique=True)
-    weight = models.DecimalField(max_digits=3, decimal_places=2,
-                                 validators=[MinValueValidator(10), MaxValueValidator(100)])
+    weight = models.IntegerField(validators=[MinValueValidator(10), MaxValueValidator(90)])
     outcomes = RichTextField()
     outline = models.ForeignKey(Outline, on_delete=models.CASCADE)
 

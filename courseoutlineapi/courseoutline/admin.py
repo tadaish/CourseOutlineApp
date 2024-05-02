@@ -36,5 +36,4 @@ class CourseAdmin(admin.ModelAdmin):
 
 admin.site.register(Category)
 admin.site.register(Course, CourseAdmin)
-admin.site.register(Outline)
 admin.site.register(User, UserAdmin)
