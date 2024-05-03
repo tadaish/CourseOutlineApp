@@ -48,7 +48,6 @@ class CourseViewSet(viewsets.ViewSet, generics.ListAPIView):
 
     @action(methods=['post'], url_path='outline', detail=True)
     def add_outline(self, request, pk):
-
         outline = self.get_object().outline_set.create(
             lecturer=request.user,
             title=request.data.get('title'),
@@ -72,13 +71,17 @@ class OutlineViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.UpdateA
 
     @action(methods=['post'], url_path='assessment', detail=True)
     def add_assessment(self, request, pk):
-        assessment = self.get_object().assessment_set.create(
-            name=request.data.get('name'),
-            weight=request.data.get('weight'),
-            outcomes=request.data.get('outcomes')
-        )
+        total_weight = Assessment.objects.filter(outline_id=pk).aggregate(total_weight=Sum('weight'))
+        if total_weight <= 100:
+            assessment = self.get_object().assessment_set.create(
+                name=request.data.get('name'),
+                weight=request.data.get('weight'),
+                outcomes=request.data.get('outcomes')
+            )
 
-        return Response(serializers.AssessmentSerializer(assessment).data, status=status.HTTP_201_CREATED)
+            return Response(serializers.AssessmentSerializer(assessment).data, status=status.HTTP_201_CREATED)
+
+        return Response({"error": "Tổng không được vượt quá 100%"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):

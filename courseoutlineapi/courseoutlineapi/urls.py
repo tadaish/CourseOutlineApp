@@ -26,8 +26,8 @@ schema_view = get_schema_view(
         title="CourseOutline API",
         default_version='v1',
         description="APIs for CourseOutline",
-        contact=openapi.Contact(email="thanh.dh@ou.edu.vn"),
-        license=openapi.License(name="Dương Hữu Thành@2024"),
+        contact=openapi.Contact(email="1951052225tuan@ou.edu.vn"),
+        license=openapi.License(name="Nguyễn Lễ Thanh Tuấn @2024"),
     ),
     public=True,
     permission_classes=(permissions.AllowAny,),
@@ -46,4 +46,6 @@ urlpatterns = [
     re_path(r'^redoc/$',
             schema_view.with_ui('redoc', cache_timeout=0),
             name='schema-redoc'),
+    path('o/', include('oauth2_provider.urls',
+                       namespace='oauth2_provider'))
 ]
