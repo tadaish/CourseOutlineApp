@@ -1,6 +1,22 @@
 from django.contrib import admin
 from courseoutline.models import Course, Outline, Category, User, Assessment
+from django.db.models import Count
 from django import forms
+from django.urls import path
+from django.template.response import TemplateResponse
+
+
+class CustomAdmin(admin.AdminSite):
+    site_header = 'Course Outline Administrator'
+
+    def index(self, request, extra_context=None):
+        stats = Category.objects.annotate(counter=Count('course__id')).values('id', 'name', 'counter')
+        return super(CustomAdmin, self).index(request, extra_context={
+            'stats': stats
+        })
+
+
+admin.site = CustomAdmin()
 
 
 class UserForm(forms.ModelForm):
@@ -13,10 +29,6 @@ class UserAdmin(admin.ModelAdmin):
     form = UserForm
     list_display = ['id', 'username', 'fullname', 'email', 'role', 'is_active']
     list_filter = ['id', 'username']
-
-    def role(self, user):
-        if user.is_superuser:
-            return user.role
 
     def approve(self, request, queryset):
         queryset.update(is_active=True)

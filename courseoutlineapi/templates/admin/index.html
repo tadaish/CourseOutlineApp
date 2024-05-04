@@ -1,0 +1,71 @@
+{% extends 'admin/base_site.html' %}
+
+{% block sidebar %}
+<style>
+    .card {
+  /* Add shadows to create the "card" effect */
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  transition: 0.3s;
+  margin-right: 20px;
+}
+
+/* Add some padding inside the card container */
+.container {
+  padding: 2px 16px;
+}
+
+
+</style>
+<div class="counter_container" style="display:flex; align-items: center;">
+    {% for s in stats %}
+    <div class="card">
+        <div class="container">
+            <h4><b>{{s.name}}</b></h4>
+            <p>{{s.counter}}</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+
+<div>
+
+</div>
+<div style="width: 50%;">
+    <canvas id="myChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    let labels = [];
+    let data = [];
+    {% for s in stats %}
+    labels.push('{{ s.name }}')
+    data.push({{ s.counter }})
+    {% endfor %}
+    window.onload = function() {
+          const ctx = document.getElementById('myChart');
+
+          new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: labels,
+              datasets: [{
+                label: '# Số lượng',
+                data: data,
+                borderWidth: 1,
+                backgroundColor: ['red', 'green', 'blue', 'gold']
+              }]
+            },
+            options: {
+              scales: {
+                y: {
+                  beginAtZero: true
+                }
+              }
+            }
+          });
+    }
+</script>
+
+{% endblock %}

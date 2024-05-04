@@ -7,6 +7,7 @@ from cloudinary.models import CloudinaryField
 
 class User(AbstractUser):
     ROLE_CHOICES = (
+        ('admin', 'Admin'),
         ('giảng viên', 'Giảng Viên'),
         ('sinh viên', 'Sinh Viên')
     )
@@ -16,8 +17,10 @@ class User(AbstractUser):
     avatar = CloudinaryField(null=True)
 
     def save(self, *args, **kwargs):
+        self.is_active = False
         if self.is_superuser:
-            self.role = 'Quản trị viên'
+            self.role = 'admin'
+            self.is_active = True
         super().save(*args, **kwargs)
 
 

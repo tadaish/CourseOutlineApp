@@ -52,7 +52,8 @@ INSTALLED_APPS = [
     'ckeditor_uploader',
     'rest_framework',
     'drf_yasg',
-    'oauth2_provider'
+    'oauth2_provider',
+    'bootstrap5'
 ]
 
 REST_FRAMEWORK = {
@@ -76,7 +77,7 @@ ROOT_URLCONF = 'courseoutlineapi.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -146,6 +147,6 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CLIENT_ID = 'wsJ6PieHfGCa2YCFRvFcv2mbwkRBxqBE6ojPYUnl'
+CLIENT_ID = 'akvD92gxmNZ0KsFpj9VxKa8d49woaLIBOnZ0D5F9'
 
-CLIENT_SECRET = "916Hc6TLy01IodVLjqBo0JlIkMyMKd6NkTp4axfQuMOmK08mSLCbu5gNFXqwC9ab2QWUwOEDmhyU4O3POEU1TCRcLiA0M0pccpIjHzKJjYlYypKnufNSFYu2tR7Ifdm9"
+CLIENT_SECRET = "eMKKupxOzzhsrjlHIwbTPeQxPRt1OzJk8MYZ6tiTyRLq5rjPaDsDpsQFCWUkFN8AolYcwcun9UEeMainvRXfwc82rpcklP9IA97K9KnG1AYp0KdeOl4obHOPfdpdKbHx"
