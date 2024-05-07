@@ -1,4 +1,4 @@
-package com.courseoutlinemobile
+package com.anonymous.courseoutlinemobile
 
 import android.app.Application
 import android.content.res.Configuration
