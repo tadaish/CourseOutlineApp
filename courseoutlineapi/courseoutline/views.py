@@ -46,45 +46,23 @@ class CourseViewSet(viewsets.ViewSet, generics.ListAPIView):
 
         return Response(serializers.OutlineSerializer(outlines, many=True).data, status=status.HTTP_200_OK)
 
-    @action(methods=['post'], url_path='outline', detail=True)
-    def add_outline(self, request, pk):
-        outline = self.get_object().outline_set.create(
-            lecturer=request.user,
-            title=request.data.get('title'),
-            content=request.data.get('content'),
-            credit=request.data.get('credit'),
-            resource=request.data.get('resource')
-        )
 
-        return Response(serializers.OutlineSerializer(outline).data, status=status.HTTP_201_CREATED)
-
-
-class OutlineViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.UpdateAPIView):
+class OutlineViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.CreateAPIView):
     queryset = Outline.objects.all()
     serializer_class = serializers.OutlineSerializer
 
-    @action(methods=['get'], url_path='assessments', detail=True)
-    def get_assessments(self, request, pk):
-        assessments = self.get_object().assessment_set.all()
+    def get_serializer_context(self):
+        return {'request': self.request}
 
-        return Response(serializers.AssessmentSerializer(assessments).data, status=status.HTTP_200_OK)
+    @action(methods=['post'], url_path='comments', detail=True)
+    def add_comment(self, request, pk):
+        c = self.get_object().comment_set.create(user=request.user, content=request.data.get('con   tent'))
 
-    @action(methods=['post'], url_path='assessment', detail=True)
-    def add_assessment(self, request, pk):
-        total_weight = Assessment.objects.filter(outline_id=pk).aggregate(total_weight=Sum('weight'))
-        if total_weight <= 100:
-            assessment = self.get_object().assessment_set.create(
-                name=request.data.get('name'),
-                weight=request.data.get('weight'),
-                outcomes=request.data.get('outcomes')
-            )
-
-            return Response(serializers.AssessmentSerializer(assessment).data, status=status.HTTP_201_CREATED)
-
-        return Response({"error": "Tổng không được vượt quá 100%"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializers.CommentSerializer(c).data,
+                        status=status.HTTP_201_CREATED)
 
 
-class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
+class UserViewSet(viewsets.ViewSet, generics.CreateAPIView, generics.ListAPIView):
     queryset = User.objects.filter(is_active=True)
     serializer_class = serializers.UserSerializer
     parser_classes = [parsers.MultiPartParser, ]
@@ -106,6 +84,6 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
         return Response(serializers.UserSerializer(user).data)
 
 
-class AssessmentViewSet(viewsets.ViewSet, generics.UpdateAPIView, generics.DestroyAPIView):
+class AssessmentViewSet(viewsets.ViewSet, generics.DestroyAPIView):
     queryset = Assessment.objects.all()
     serializer_class = serializers.AssessmentSerializer

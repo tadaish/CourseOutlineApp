@@ -13,17 +13,42 @@ class CourseSerializer(serializers.ModelSerializer):
         model = Course
         fields = '__all__'
 
-
-class OutlineSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Outline
-        fields = '__all__'
+    category = CategorySerializer(many=False)
 
 
 class AssessmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Assessment
-        fields = '__all__'
+        fields = ['method', 'weight', 'outline']
+        extra_kwargs = {'outline': {'required': False}}
+
+
+class OutlineSerializer(serializers.ModelSerializer):
+    assessments = AssessmentSerializer(many=True)
+
+    class Meta:
+        model = Outline
+        fields = ['id', 'title', 'content', 'assessments', 'credit', 'resource', 'lecturer', 'course']
+        extra_kwargs = {'lecturer': {'required': False}}
+
+    def validate_assessments(self, value):
+        if len(value) < 2:
+            raise serializers.ValidationError("Phải có ít nhất 2 cột đánh giá")
+        if len(value) > 5:
+            raise serializers.ValidationError("Chỉ đuợc nhiều nhất 5 cột đánh giá")
+        total_weight = sum(assessment['weight'] for assessment in value)
+        if total_weight != 100:
+            raise serializers.ValidationError("Tổng các cột điểm đánh giá phải là 100%")
+
+        return value
+
+    def create(self, validated_data):
+        assessments = validated_data.pop('assessments')
+        outline = Outline.objects.create(lecturer=self.context['request'].user, **validated_data)
+        for assessment in assessments:
+            Assessment.objects.create(outline=outline, **assessment)
+
+        return outline
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -50,3 +75,11 @@ class UserSerializer(serializers.ModelSerializer):
                 'write_only': True
             }
         }
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'content', 'created_date', 'updated_date', 'user']

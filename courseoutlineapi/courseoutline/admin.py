@@ -22,7 +22,7 @@ admin.site = CustomAdmin()
 class UserForm(forms.ModelForm):
     class Meta:
         models = User
-        fields = ['username', 'password', 'fullname', 'email', 'role', 'is_staff', 'is_active']
+        fields = ['username', 'password', 'fullname', 'email', 'role', 'avatar', 'is_staff', 'is_active']
 
 
 class UserAdmin(admin.ModelAdmin):

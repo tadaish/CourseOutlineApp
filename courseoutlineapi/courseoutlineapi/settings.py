@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-6@dt51_kw6i(*ob$sf747gtd0zhnv)$a=8p&#^p=t7+%khtk7j
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.1.7']
 
 import cloudinary
 
@@ -70,6 +70,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
 ]
 
 ROOT_URLCONF = 'courseoutlineapi.urls'
@@ -147,6 +148,6 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CLIENT_ID = 'akvD92gxmNZ0KsFpj9VxKa8d49woaLIBOnZ0D5F9'
+CLIENT_ID = 'iYyCT5oN493D8dcRt0Jiazd6TJGqLA3VZy1hmJOj'
 
-CLIENT_SECRET = "eMKKupxOzzhsrjlHIwbTPeQxPRt1OzJk8MYZ6tiTyRLq5rjPaDsDpsQFCWUkFN8AolYcwcun9UEeMainvRXfwc82rpcklP9IA97K9KnG1AYp0KdeOl4obHOPfdpdKbHx"
+CLIENT_SECRET = "V3FNTVzq1TKvqX0EfumrKrDpKdEcFAgeFQUx7qacFcypyU6tngyuKZ5yeLUfWOqhOiJ29mk1vcmEtLP4H2Tk3sCZ7H3iH1U6sPzxUUgOn29OMyPQFgf2QI42eG45WJwq"

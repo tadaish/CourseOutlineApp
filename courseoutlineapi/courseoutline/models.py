@@ -61,20 +61,19 @@ class Outline(BaseModel):
     credit = models.PositiveSmallIntegerField()
     resource = RichTextField()
     lecturer = models.ForeignKey(User, on_delete=models.CASCADE)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course = models.OneToOneField(Course, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
 
 
 class Assessment(BaseModel):
-    name = models.CharField(max_length=50, unique=True)
+    method = models.CharField(max_length=50)
     weight = models.IntegerField(validators=[MinValueValidator(10), MaxValueValidator(90)])
-    outcomes = RichTextField()
-    outline = models.ForeignKey(Outline, on_delete=models.CASCADE)
+    outline = models.ForeignKey(Outline, on_delete=models.CASCADE, related_name="assessments")
 
     def __str__(self):
-        return self.name
+        return self.method
 
 
 class Comment(BaseModel):

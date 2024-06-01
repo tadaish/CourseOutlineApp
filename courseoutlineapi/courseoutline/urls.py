@@ -5,8 +5,8 @@ from . import views
 r = routers.DefaultRouter()
 r.register('categories', views.CategoryViewSet, 'categories')
 r.register('courses', views.CourseViewSet, 'courses')
-r.register('outlines', views.OutlineViewSet, 'outlines')
 r.register('users', views.UserViewSet, 'users')
+r.register('outline', views.OutlineViewSet, 'outlines')
 r.register('assessments', views.AssessmentViewSet, 'assessments')
 
 urlpatterns = [
