@@ -15,4 +15,7 @@ export default StyleSheet.create({
   card: {
     marginTop: 10,
   },
+  input: {
+    marginBottom: 10,
+  },
 });

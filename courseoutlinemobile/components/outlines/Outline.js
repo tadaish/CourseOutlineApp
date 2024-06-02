@@ -31,6 +31,8 @@ const Outline = () => {
   const [assessments, setAssessments] = useState([]);
   const [method, setMethod] = useState("");
   const [weight, setWeight] = useState("");
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [isEdit, setIsEdit] = useState(false);
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
@@ -57,10 +59,19 @@ const Outline = () => {
 
   const richText = React.useRef();
 
-  const handleAddAssessment = () => {
+  const handleAddOrEditAssessment = () => {
     if (method.trim() && weight.trim()) {
-      setAssessments([...assessments, { method, weight: parseInt(weight) }]);
-      console.info(assessments);
+      if (isEdit && editingIndex !== null) {
+        const updatedAssessment = assessments.map((item, index) =>
+          index === editingIndex ? { method, weight: parseInt(weight) } : item
+        );
+        setAssessments(updatedAssessment);
+        setEditingIndex(null);
+        setIsEdit(false);
+      } else {
+        setAssessments([...assessments, { method, weight: parseInt(weight) }]);
+      }
+
       setMethod("");
       setWeight("");
     } else {
@@ -68,19 +79,28 @@ const Outline = () => {
     }
   };
 
-  const renderAssessment = ({ item, index }) => (
-    <View>
-      <TouchableOpacity>
-        <Card style={Styles.card}>
-          <Card.Content>
-            <Text>{index + 1}</Text>
-            <Text>Phương thức: {item.method}</Text>
-            <Text>Tỉ trọng: {item.weight}%</Text>
-          </Card.Content>
-        </Card>
-      </TouchableOpacity>
-    </View>
-  );
+  const handleEdit = (index) => {
+    setEditingIndex(index);
+    setIsEdit(true);
+    setMethod(assessments[index].method);
+    setWeight(assessments[index].weight.toString());
+    showModal();
+  };
+
+  const handleShowModal = () => {
+    setIsEdit(false);
+    setWeight("");
+    setMethod("");
+    showModal();
+  };
+
+  const handleDelete = (index) => {
+    const updatedAssessment = [...assessments];
+    updatedAssessment.splice(index, 1);
+    setAssessments(updatedAssessment);
+    setIsEdit(false);
+    hideModal();
+  };
 
   return (
     <Provider>
@@ -117,7 +137,7 @@ const Outline = () => {
           <RichToolbar editor={richText} />
           <RichEditor ref={richText} />
           <Text style={Styles.label}>Đánh giá:</Text>
-          <Button onPress={showModal}>Thêm đánh giá</Button>
+          <Button onPress={handleShowModal}>Thêm đánh giá</Button>
           <Portal>
             <Modal
               visible={visible}
@@ -130,6 +150,7 @@ const Outline = () => {
                 label="Phương thức"
                 value={method}
                 onChangeText={setMethod}
+                style={Styles.input}
               />
               <TextInput
                 mode="outlined"
@@ -137,17 +158,31 @@ const Outline = () => {
                 keyboardType="numeric"
                 value={weight}
                 onChangeText={setWeight}
+                style={Styles.input}
               />
-              <Button onPress={handleAddAssessment}>Thêm</Button>
+              <Button onPress={handleAddOrEditAssessment}>
+                {isEdit ? "Sửa" : "Thêm"}
+              </Button>
+              {isEdit && (
+                <Button textColor="red" onPress={handleDelete}>
+                  Xoá
+                </Button>
+              )}
             </Modal>
           </Portal>
-          <SafeAreaView>
-            <FlatList
-              data={assessments}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={renderAssessment}
-            />
-          </SafeAreaView>
+          {assessments.map((item, index) => (
+            <View key={item.key}>
+              <TouchableOpacity onPress={() => handleEdit(index)}>
+                <Card style={Styles.card}>
+                  <Card.Content>
+                    <Text>{index + 1}</Text>
+                    <Text>Phương thức: {item.method}</Text>
+                    <Text>Tỉ trọng: {item.weight}%</Text>
+                  </Card.Content>
+                </Card>
+              </TouchableOpacity>
+            </View>
+          ))}
           <Text style={Styles.label}>Tài liệu tham khảo:</Text>
           <RichToolbar editor={richText} />
           <RichEditor ref={richText} />
