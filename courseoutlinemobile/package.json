@@ -20,7 +20,8 @@
     "react": "18.2.0",
     "react-native": "0.74.1",
     "react-native-paper": "^5.12.3",
-    "react-native-paper-dropdown": "^1.0.7"
+    "react-native-paper-dropdown": "^1.0.7",
+    "react-native-pell-rich-editor": "^1.9.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
