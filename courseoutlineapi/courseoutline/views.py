@@ -32,20 +32,6 @@ class CourseViewSet(viewsets.ViewSet, generics.ListAPIView):
 
         return queryset
 
-    @action(methods=['get'], url_path='outlines', detail=True)
-    def get_outlines(self, request, pk):
-        outlines = self.get_object().outline_set.filter(active=True)
-
-        q = request.query_params.get('q')
-        if q:
-            outlines = outlines.filter(title__icontains=q)
-
-        credit = request.query_params.get('credit')
-        if credit:
-            outlines = outlines.filter(credit=credit)
-
-        return Response(serializers.OutlineSerializer(outlines, many=True).data, status=status.HTTP_200_OK)
-
 
 class OutlineViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.CreateAPIView):
     queryset = Outline.objects.all()
@@ -82,6 +68,20 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView, generics.ListAPIView
             user.save()
 
         return Response(serializers.UserSerializer(user).data)
+
+    @action(methods=['get'], url_path='outlines', detail=True)
+    def get_outlines(self, request, pk):
+        outlines = self.get_object().outline_set.filter(active=True)
+
+        q = request.query_params.get('q')
+        if q:
+            outlines = outlines.filter(title__icontains=q)
+
+        credit = request.query_params.get('credit')
+        if credit:
+            outlines = outlines.filter(credit=credit)
+
+        return Response(serializers.OutlineSerializer(outlines, many=True).data, status=status.HTTP_200_OK)
 
 
 class AssessmentViewSet(viewsets.ViewSet, generics.DestroyAPIView):
