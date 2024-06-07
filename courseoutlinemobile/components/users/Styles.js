@@ -35,4 +35,9 @@ export default StyleSheet.create({
     width: 200,
     height: 200,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });

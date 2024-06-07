@@ -3,6 +3,7 @@ from courseoutline import serializers
 from courseoutline.models import Category, Course, Outline, Comment, Assessment, User
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from django.db.models import Q
 
 
 class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
@@ -33,7 +34,7 @@ class CourseViewSet(viewsets.ViewSet, generics.ListAPIView):
         return queryset
 
 
-class OutlineViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.CreateAPIView):
+class OutlineViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.CreateAPIView, generics.ListAPIView):
     queryset = Outline.objects.all()
     serializer_class = serializers.OutlineSerializer
 
@@ -71,15 +72,11 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView, generics.ListAPIView
 
     @action(methods=['get'], url_path='outlines', detail=True)
     def get_outlines(self, request, pk):
-        outlines = self.get_object().outline_set.filter(active=True)
+        outlines = self.get_object().outline_set.select_related('lecturer').all()
 
         q = request.query_params.get('q')
         if q:
-            outlines = outlines.filter(title__icontains=q)
-
-        credit = request.query_params.get('credit')
-        if credit:
-            outlines = outlines.filter(credit=credit)
+            outlines = outlines.filter(Q(title__icontains=q))
 
         return Response(serializers.OutlineSerializer(outlines, many=True).data, status=status.HTTP_200_OK)
 

@@ -14,8 +14,24 @@ export default StyleSheet.create({
   },
   card: {
     marginTop: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.29,
+    shadowRadius: 4.65,
+    elevation: 7,
   },
   input: {
     marginBottom: 10,
+  },
+  outline_container: {
+    marginTop: 20,
+  },
+  home_label: {
+    fontSize: 20,
+    fontWeight: "semibold",
+    marginBottom: 20,
   },
 });

@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
-import { Button, TextInput } from "react-native-paper";
+import { SafeAreaView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Button, TextInput } from "react-native-paper";
 import Styles from "./Styles";
 import APIs, { authApi, endpoints } from "../../configs/APIs";
 
@@ -11,12 +11,10 @@ const Login = ({ navigation }) => {
   const fields = [
     {
       label: "Tên đăng nhập",
-      icon: "text",
       field: "username",
     },
     {
       label: "Mật khẩu",
-      icon: "eye",
       field: "password",
       secureTextEntry: true,
     },
@@ -75,6 +73,14 @@ const Login = ({ navigation }) => {
     }
   };
 
+  if (loading) {
+    return (
+      <SafeAreaView style={Styles.loadingContainer}>
+        <ActivityIndicator size="large" />
+        <Text>Loading...</Text>
+      </SafeAreaView>
+    );
+  }
   return (
     <>
       <View style={Styles.login_container}>
@@ -87,7 +93,6 @@ const Login = ({ navigation }) => {
             style={Styles.input}
             label={f.label}
             secureTextEntry={f.secureTextEntry}
-            right={<TextInput.Icon icon={f.icon} />}
           />
         ))}
         <Button style={Styles.button} mode="contained" onPress={login}>

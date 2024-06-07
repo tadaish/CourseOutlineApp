@@ -8,6 +8,8 @@ export const endpoints = {
   register: "/users/",
   login: "/o/token/",
   current_user: "/users/current-user/",
+  add_outline: "/outline/",
+  get_outlines: (userId) => `/users/${userId}/outlines/`,
 };
 
 export const authApi = (token) => {

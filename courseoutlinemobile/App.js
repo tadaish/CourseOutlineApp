@@ -10,6 +10,7 @@ import { useReducer } from "react";
 import MyUserReducer from "./configs/Reducers";
 import Outline from "./components/outlines/Outline";
 import Account from "./components/accounts/Account";
+import OutlineDetails from "./components/outlines/OutlineDetails";
 
 const Stack = createNativeStackNavigator();
 
@@ -53,11 +54,12 @@ const MyStack = () => {
   return (
     <Stack.Navigator
       screenOptions={{ headerShown: false }}
-      initialRouteName="Main"
+      initialRouteName="Login"
     >
       <Stack.Screen name="Main" component={MyTab} />
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Register" component={Register} />
+      <Stack.Screen name="OutlineDetails" component={OutlineDetails} />
     </Stack.Navigator>
   );
 };

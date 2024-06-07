@@ -1,8 +1,6 @@
 import {
-  FlatList,
+  Alert,
   KeyboardAvoidingView,
-  Platform,
-  SafeAreaView,
   ScrollView,
   TouchableOpacity,
   View,
@@ -11,6 +9,7 @@ import {
   Appbar,
   Button,
   Card,
+  HelperText,
   Modal,
   Portal,
   Provider,
@@ -20,19 +19,28 @@ import {
 import Styles from "./Styles";
 import DropDown from "react-native-paper-dropdown";
 import React, { useEffect, useState } from "react";
-import APIs, { endpoints } from "../../configs/APIs";
+import APIs, { authApi, endpoints } from "../../configs/APIs";
 import { RichEditor, RichToolbar } from "react-native-pell-rich-editor";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Outline = () => {
   const [showDropDown, setShowDropDown] = React.useState(false);
   const [courses, setCourses] = useState([]);
-  const [course, setCourse] = useState(null);
   const [visible, setVisible] = React.useState(false);
   const [assessments, setAssessments] = useState([]);
   const [method, setMethod] = useState("");
   const [weight, setWeight] = useState("");
   const [editingIndex, setEditingIndex] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
+  const [outline, setOutline] = useState({
+    course: "",
+    title: "",
+    content: "",
+    credit: "",
+    assessments: [],
+    resource: "",
+  });
+  const [error, setError] = useState("");
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
@@ -48,9 +56,26 @@ const Outline = () => {
     }
   };
 
+  const addOutline = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      let res = await authApi(token).post(endpoints["add_outline"], outline);
+      if (res.status === 201) {
+        Alert.alert("Thành công", "Thêm đề cương thành công");
+      }
+    } catch (ex) {
+      setError(ex.response.data);
+      console.error(ex.response.data);
+    }
+  };
   useEffect(() => {
     loadCourse();
   }, []);
+
+  //cập nhật field assessments trong outline mỗi khi assessmnents thay đổi
+  useEffect(() => {
+    setOutline((field) => ({ ...field, assessments: assessments }));
+  }, [assessments]);
 
   const courseList = courses.map((c) => ({
     label: c.name,
@@ -68,8 +93,10 @@ const Outline = () => {
         setAssessments(updatedAssessment);
         setEditingIndex(null);
         setIsEdit(false);
+        hideModal();
       } else {
         setAssessments([...assessments, { method, weight: parseInt(weight) }]);
+        hideModal();
       }
 
       setMethod("");
@@ -94,19 +121,25 @@ const Outline = () => {
     showModal();
   };
 
-  const handleDelete = (index) => {
+  const handleDelete = () => {
     const updatedAssessment = [...assessments];
-    updatedAssessment.splice(index, 1);
+    updatedAssessment.splice(editingIndex, 1);
     setAssessments(updatedAssessment);
     setIsEdit(false);
     hideModal();
+  };
+
+  const change = (field, value) => {
+    setOutline((current) => {
+      return { ...current, [field]: value };
+    });
   };
 
   return (
     <Provider>
       <Appbar.Header>
         <Appbar.Content title="Thêm đề cương" />
-        <Appbar.Action icon="plus" />
+        <Appbar.Action icon="plus" onPress={addOutline} />
       </Appbar.Header>
 
       <ScrollView style={Styles.container}>
@@ -114,29 +147,49 @@ const Outline = () => {
           <Text style={Styles.label}>Môn học</Text>
           <DropDown
             mode={"outlined"}
+            placeholder="Chọn môn học"
             visible={showDropDown}
             showDropDown={() => setShowDropDown(true)}
             onDismiss={() => setShowDropDown(false)}
             list={courseList}
-            value={course}
-            setValue={setCourse}
+            value={outline.course}
+            setValue={(e) => change(["course"], e)}
           />
           <Text style={Styles.label}>Tiêu đề:</Text>
           <TextInput
             mode="outlined"
             placeholder="Nhập tiêu đề của đề cương ở đây..."
+            value={outline["title"]}
+            onChangeText={(e) => change(["title"], e)}
+            key="title"
+            error={!!error["title"]}
           />
+          <HelperText type="error" visible={!!error["title"]}>
+            Tiêu đề không được để trống !
+          </HelperText>
           <Text style={Styles.label}>Số tín chỉ:</Text>
           <TextInput
             mode="outlined"
             placeholder="Nhập số tín chỉ..."
             keyboardType="numeric"
+            value={outline["credit"]}
+            onChangeText={(e) => change(["credit"], e)}
+            key="credit"
+            error={!!error["credit"]}
           />
+          <HelperText type="error" visible={!!error["credit"]}>
+            Số tín chỉ không được bỏ trống !
+          </HelperText>
           <Text style={Styles.label}>Nội dung:</Text>
-
           <RichToolbar editor={richText} />
-          <RichEditor ref={richText} />
+          <RichEditor ref={richText} onChange={(e) => change(["content"], e)} />
+          <HelperText type="error" visible={!!error["content"]}>
+            Nội dung không được bỏ trống !
+          </HelperText>
           <Text style={Styles.label}>Đánh giá:</Text>
+          <HelperText type="error" visible={!!error["assessments"]}>
+            {error["assessments"]}
+          </HelperText>
           <Button onPress={handleShowModal}>Thêm đánh giá</Button>
           <Portal>
             <Modal
@@ -171,9 +224,9 @@ const Outline = () => {
             </Modal>
           </Portal>
           {assessments.map((item, index) => (
-            <View key={item.key}>
+            <View key={index}>
               <TouchableOpacity onPress={() => handleEdit(index)}>
-                <Card style={Styles.card}>
+                <Card style={Styles.card} mode="outlined">
                   <Card.Content>
                     <Text>{index + 1}</Text>
                     <Text>Phương thức: {item.method}</Text>
@@ -185,7 +238,13 @@ const Outline = () => {
           ))}
           <Text style={Styles.label}>Tài liệu tham khảo:</Text>
           <RichToolbar editor={richText} />
-          <RichEditor ref={richText} />
+          <RichEditor
+            ref={richText}
+            onChange={(e) => change(["resource"], e)}
+          />
+          <HelperText type="error" visible={!!error["resource"]}>
+            Tài liệu tham khảo không được bỏ trống !
+          </HelperText>
         </KeyboardAvoidingView>
       </ScrollView>
     </Provider>
