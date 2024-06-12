@@ -70,7 +70,7 @@ const Home = ({ navigation }) => {
           <Text style={Styles.home_label}>
             Chào mừng trở lại {user.fullname}
           </Text>
-          <Icon source="hand-wave-outline" size={30} color="yellow" />
+          <Icon source="hand-wave-outline" size={30} />
         </View>
         <View>
           <Searchbar
@@ -84,7 +84,15 @@ const Home = ({ navigation }) => {
           <View style={Styles.outline_container}>
             {outline.map((o) => (
               <TouchableOpacity key={o.id}>
-                <Card style={Styles.card} mode="outlined">
+                <Card
+                  style={Styles.card}
+                  mode="outlined"
+                  onPress={() =>
+                    navigation.navigate("OutlineDetails", {
+                      outlineId: o.id,
+                    })
+                  }
+                >
                   <Card.Title title={o.title} />
                   <Card.Content>
                     <Text>

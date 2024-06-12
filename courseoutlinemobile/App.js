@@ -16,6 +16,18 @@ const Stack = createNativeStackNavigator();
 
 const Tab = createBottomTabNavigator();
 
+const HomeStack = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{ headerShown: false }}
+      initialRouteName="HomeScreen"
+    >
+      <Stack.Screen name="HomeScreen" component={Home} />
+      <Stack.Screen name="OutlineDetails" component={OutlineDetails} />
+    </Stack.Navigator>
+  );
+};
+
 const MyTab = () => {
   return (
     <Tab.Navigator
@@ -25,7 +37,7 @@ const MyTab = () => {
     >
       <Tab.Screen
         name="Home"
-        component={Home}
+        component={HomeStack}
         options={{
           title: "Trang chủ",
           tabBarIcon: () => <Icon source="home" size={30} />,
@@ -59,7 +71,6 @@ const MyStack = () => {
       <Stack.Screen name="Main" component={MyTab} />
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Register" component={Register} />
-      <Stack.Screen name="OutlineDetails" component={OutlineDetails} />
     </Stack.Navigator>
   );
 };

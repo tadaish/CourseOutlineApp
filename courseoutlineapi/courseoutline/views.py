@@ -34,7 +34,8 @@ class CourseViewSet(viewsets.ViewSet, generics.ListAPIView):
         return queryset
 
 
-class OutlineViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.CreateAPIView, generics.ListAPIView):
+class OutlineViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.CreateAPIView, generics.ListAPIView,
+                     generics.RetrieveAPIView):
     queryset = Outline.objects.all()
     serializer_class = serializers.OutlineSerializer
 

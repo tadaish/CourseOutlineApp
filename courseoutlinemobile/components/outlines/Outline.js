@@ -36,7 +36,6 @@ const Outline = () => {
     course: "",
     title: "",
     content: "",
-    credit: "",
     assessments: [],
     resource: "",
   });
@@ -166,19 +165,6 @@ const Outline = () => {
           />
           <HelperText type="error" visible={!!error["title"]}>
             Tiêu đề không được để trống !
-          </HelperText>
-          <Text style={Styles.label}>Số tín chỉ:</Text>
-          <TextInput
-            mode="outlined"
-            placeholder="Nhập số tín chỉ..."
-            keyboardType="numeric"
-            value={outline["credit"]}
-            onChangeText={(e) => change(["credit"], e)}
-            key="credit"
-            error={!!error["credit"]}
-          />
-          <HelperText type="error" visible={!!error["credit"]}>
-            Số tín chỉ không được bỏ trống !
           </HelperText>
           <Text style={Styles.label}>Nội dung:</Text>
           <RichToolbar editor={richText} />

@@ -50,6 +50,11 @@ class OutlineSerializer(serializers.ModelSerializer):
 
         return outline
 
+    def update(self, instance, validated_data):
+        assessments = validated_data.pop('assessments')
+        instance.title = validated_data.get('title')
+        instance.content = validated_data.get('content')
+
 
 class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):

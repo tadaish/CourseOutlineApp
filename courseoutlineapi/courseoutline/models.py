@@ -46,9 +46,10 @@ class Course(BaseModel):
         ('online', 'Trực tuyến'),
         ('blended', 'Kết hợp')
     )
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100)
     category = models.ForeignKey(Category, on_delete=models.PROTECT)
     delivery_mode = models.CharField(max_length=100, choices=MODE_CHOICES)
+    credit = models.PositiveSmallIntegerField()
     term = models.CharField(max_length=50)
 
     def __str__(self):
@@ -58,7 +59,6 @@ class Course(BaseModel):
 class Outline(BaseModel):
     title = models.CharField(max_length=100, unique=True)
     content = RichTextField()
-    credit = models.PositiveSmallIntegerField()
     resource = RichTextField()
     lecturer = models.ForeignKey(User, on_delete=models.CASCADE)
     course = models.OneToOneField(Course, on_delete=models.CASCADE)
