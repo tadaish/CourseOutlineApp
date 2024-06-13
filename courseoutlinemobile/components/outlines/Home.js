@@ -72,16 +72,17 @@ const Home = ({ navigation }) => {
           </Text>
           <Icon source="hand-wave-outline" size={30} />
         </View>
-        <View>
-          <Searchbar
-            placeholder="Nhập tên đề cương..."
-            onChangeText={(t) => search(t, setQ)}
-          />
-        </View>
-        {outline === null ? (
+
+        {outline ? (
           <Text>Chưa có đề cương nào...</Text>
         ) : (
           <View style={Styles.outline_container}>
+            <View>
+              <Searchbar
+                placeholder="Nhập tên đề cương..."
+                onChangeText={(t) => search(t, setQ)}
+              />
+            </View>
             {outline.map((o) => (
               <TouchableOpacity key={o.id}>
                 <Card
@@ -93,11 +94,10 @@ const Home = ({ navigation }) => {
                     })
                   }
                 >
-                  <Card.Title title={o.title} />
+                  <Card.Title
+                    title={courses.find((c) => c.id === o.course).name}
+                  />
                   <Card.Content>
-                    <Text>
-                      Môn: {courses.find((c) => c.id === o.course).name}
-                    </Text>
                     <Text>
                       Khoa:{" "}
                       {courses.find((c) => c.id === o.course).category.name}

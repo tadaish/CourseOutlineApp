@@ -1,9 +1,7 @@
 from django.contrib import admin
-from courseoutline.models import Course, Outline, Category, User, Assessment
+from courseoutline.models import Course, Category, User
 from django.db.models import Count
 from django import forms
-from django.urls import path
-from django.template.response import TemplateResponse
 
 
 class CustomAdmin(admin.AdminSite):
@@ -20,6 +18,13 @@ admin.site = CustomAdmin()
 
 
 class UserForm(forms.ModelForm):
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.data['password'])
+        if commit:
+            user.save()
+        return user
+
     class Meta:
         models = User
         fields = ['username', 'password', 'fullname', 'email', 'role', 'avatar', 'is_staff', 'is_active']

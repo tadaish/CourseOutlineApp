@@ -28,7 +28,7 @@ class OutlineSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Outline
-        fields = ['id', 'title', 'content', 'assessments', 'credit', 'resource', 'lecturer', 'course']
+        fields = ['id', 'title', 'content', 'assessments', 'resource', 'lecturer', 'course']
         extra_kwargs = {'lecturer': {'required': False}}
 
     def validate_assessments(self, value):
@@ -43,17 +43,31 @@ class OutlineSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        assessments = validated_data.pop('assessments')
+        assessments_data = validated_data.pop('assessments')
         outline = Outline.objects.create(lecturer=self.context['request'].user, **validated_data)
-        for assessment in assessments:
-            Assessment.objects.create(outline=outline, **assessment)
+        for assessment_data in assessments_data:
+            Assessment.objects.create(outline=outline, **assessment_data)
 
         return outline
 
     def update(self, instance, validated_data):
-        assessments = validated_data.pop('assessments')
+        assessments_data = validated_data.pop('assessments')
         instance.title = validated_data.get('title')
         instance.content = validated_data.get('content')
+        instance.resource = validated_data.get('resource')
+        instance.save()
+
+        for assessment_data in assessments_data:
+            assessment_id = assessment_data.get('id')
+            if assessment_id:
+                assessment = Assessment.objects.get(id=assessment_id, outline=instance)
+                assessment.title = assessment_data.get('title')
+                assessment.weight = assessments_data.get('weight')
+                assessment.save()
+            else:
+                Assessment.objects.create(outline=instance, **assessment_data)
+
+        return instance
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -62,7 +76,7 @@ class UserSerializer(serializers.ModelSerializer):
         u = User(**data)
         u.set_password(u.password)
         u.save()
-
+        
         return u
 
     def to_representation(self, instance):

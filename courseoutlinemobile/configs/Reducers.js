@@ -1,3 +1,5 @@
+import { useNavigation } from "@react-navigation/native";
+
 const MyUserReducer = (current, action) => {
   switch (action.type) {
     case "login":

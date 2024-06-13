@@ -36,9 +36,9 @@ const Login = ({ navigation }) => {
         endpoints["login"],
         {
           ...user,
-          client_id: "kMKc9yFy696PME36bDKeNjdVXApfLFcVbyLy2lbL",
+          client_id: "0Rmo2Z6BKXWl3VGFfCIeXEQ4mqsf7kXTSDESoLSA",
           client_secret:
-            "qpCvBV8aZlBwGv3a2rlplVlBXra2bxM7EyYcjmIvMuM60ggCE6Bhr1wBcscAupi3BLXuBS0ucXoqW9LQS15ty4yEWi0Sd2fjfKAj2YhXAcBt8Plm1ililuoe5XIi06Zc",
+            "SX36IOJbJxARReQZvjmbYsN19q1T9psV1xK0pNx7NRqDIPrzK5WS7M60DsKE6QZXtHtCuEDKaRVYGGejvpCXfS7RnikuWUTkdQ5o6x3jgrTR4d3Ir2G5ZlwyEMZ3lRFu",
           grant_type: "password",
         },
         {

@@ -9,8 +9,8 @@ import { Icon } from "react-native-paper";
 import { useReducer } from "react";
 import MyUserReducer from "./configs/Reducers";
 import Outline from "./components/outlines/Outline";
-import Account from "./components/accounts/Account";
 import OutlineDetails from "./components/outlines/OutlineDetails";
+import Profile from "./components/users/Profile";
 
 const Stack = createNativeStackNavigator();
 
@@ -52,8 +52,8 @@ const MyTab = () => {
         }}
       />
       <Tab.Screen
-        name="Account"
-        component={Account}
+        name="Profile"
+        component={Profile}
         options={{
           title: "Tài khoản",
           tabBarIcon: () => <Icon source="account" size={30} />,

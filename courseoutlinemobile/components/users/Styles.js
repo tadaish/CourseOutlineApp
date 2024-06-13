@@ -40,4 +40,23 @@ export default StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  profile_banner: {
+    width: "100%",
+    backgroundColor: "slategray",
+    alignItems: "center",
+  },
+  profile_avatar: {
+    marginTop: "25%",
+  },
+  profile_banner_text: {
+    color: "azure",
+    fontSize: 20,
+    marginTop: "2%",
+    marginBottom: "5%",
+  },
+  profile_info_label: {
+    fontWeight: "thin",
+    marginLeft: "15%",
+    marginBottom: "3%",
+  },
 });
