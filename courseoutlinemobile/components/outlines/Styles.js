@@ -27,11 +27,17 @@ export default StyleSheet.create({
     marginBottom: 10,
   },
   outline_container: {
-    marginTop: 20,
+    marginTop: "5%",
   },
   home_label: {
     fontSize: 20,
     fontWeight: "semibold",
     marginBottom: 20,
+  },
+  details_container: {
+    margin: "5%",
+  },
+  details_title: {
+    marginBottom: "5%",
   },
 });

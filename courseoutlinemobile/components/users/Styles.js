@@ -15,6 +15,9 @@ export default StyleSheet.create({
     marginLeft: "10%",
     marginTop: "30%",
   },
+  register_avatar: {
+    alignItems: "center",
+  },
   button: {
     marginTop: 15,
   },

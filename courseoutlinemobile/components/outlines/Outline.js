@@ -18,15 +18,15 @@ import {
 } from "react-native-paper";
 import Styles from "./Styles";
 import DropDown from "react-native-paper-dropdown";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import APIs, { authApi, endpoints } from "../../configs/APIs";
 import { RichEditor, RichToolbar } from "react-native-pell-rich-editor";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const Outline = () => {
-  const [showDropDown, setShowDropDown] = React.useState(false);
+const Outline = ({ navigation }) => {
+  const [showDropDown, setShowDropDown] = useState(false);
   const [courses, setCourses] = useState([]);
-  const [visible, setVisible] = React.useState(false);
+  const [visible, setVisible] = useState(false);
   const [assessments, setAssessments] = useState([]);
   const [method, setMethod] = useState("");
   const [weight, setWeight] = useState("");
@@ -39,7 +39,16 @@ const Outline = () => {
     assessments: [],
     resource: "",
   });
+
   const [error, setError] = useState("");
+
+  const defaultOutline = {
+    course: "",
+    title: "",
+    content: "",
+    assessments: [],
+    resource: "",
+  };
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
@@ -60,16 +69,27 @@ const Outline = () => {
       const token = await AsyncStorage.getItem("token");
       let res = await authApi(token).post(endpoints["add_outline"], outline);
       if (res.status === 201) {
-        Alert.alert("Thành công", "Thêm đề cương thành công");
+        Alert.alert("Thành công", "Thêm đề cương thành công", [
+          {
+            text: "OK",
+            onPress: () => resetForm(),
+          },
+        ]);
       }
     } catch (ex) {
       setError(ex.response.data);
-      console.error(ex.response.data);
     }
   };
+
   useEffect(() => {
     loadCourse();
   }, []);
+
+  const resetForm = () => {
+    setOutline(defaultOutline);
+    setAssessments([]);
+    navigation.navigate("HomeScreen");
+  };
 
   //cập nhật field assessments trong outline mỗi khi assessmnents thay đổi
   useEffect(() => {
@@ -81,7 +101,8 @@ const Outline = () => {
     value: c.id,
   }));
 
-  const richText = React.useRef();
+  const richText1 = useRef();
+  const richText2 = useRef();
 
   const handleAddOrEditAssessment = () => {
     if (method.trim() && weight.trim()) {
@@ -166,9 +187,12 @@ const Outline = () => {
           <HelperText type="error" visible={!!error["title"]}>
             Tiêu đề không được để trống !
           </HelperText>
-          <Text style={Styles.label}>Nội dung:</Text>
-          <RichToolbar editor={richText} />
-          <RichEditor ref={richText} onChange={(e) => change(["content"], e)} />
+          <Text style={Styles.label}>Thông tin môn học:</Text>
+          <RichToolbar editor={richText1} />
+          <RichEditor
+            ref={richText1}
+            onChange={(e) => change(["content"], e)}
+          />
           <HelperText type="error" visible={!!error["content"]}>
             Nội dung không được bỏ trống !
           </HelperText>
@@ -223,9 +247,9 @@ const Outline = () => {
             </View>
           ))}
           <Text style={Styles.label}>Tài liệu tham khảo:</Text>
-          <RichToolbar editor={richText} />
+          <RichToolbar editor={richText2} />
           <RichEditor
-            ref={richText}
+            ref={richText2}
             onChange={(e) => change(["resource"], e)}
           />
           <HelperText type="error" visible={!!error["resource"]}>

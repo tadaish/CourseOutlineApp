@@ -1,5 +1,5 @@
 from django.contrib import admin
-from courseoutline.models import Course, Category, User
+from courseoutline.models import Course, Category, User, Outline
 from django.db.models import Count
 from django import forms
 
@@ -54,3 +54,4 @@ class CourseAdmin(admin.ModelAdmin):
 admin.site.register(Category)
 admin.site.register(Course, CourseAdmin)
 admin.site.register(User, UserAdmin)
+admin.site.register(Outline)

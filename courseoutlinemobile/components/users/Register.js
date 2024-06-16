@@ -1,6 +1,12 @@
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-import { Avatar, Button, Provider, TextInput } from "react-native-paper";
+import {
+  Avatar,
+  Button,
+  HelperText,
+  Provider,
+  TextInput,
+} from "react-native-paper";
 import Styles from "./Styles";
 import DropDown from "react-native-paper-dropdown";
 import * as ImagePicker from "expo-image-picker";
@@ -17,7 +23,13 @@ const Register = ({ navigation }) => {
   });
   const [showDropDown, setShowDropDown] = React.useState(false);
   const [avatar, setAvatar] = React.useState(null);
-  const [error, setError] = React.useState(null);
+  const [error, setError] = React.useState({
+    fullname: "",
+    email: "",
+    username: "",
+    password: "",
+    role: "",
+  });
 
   const change = (e, field) => {
     setUser((current) => {
@@ -50,6 +62,19 @@ const Register = ({ navigation }) => {
       setAvatar(avatar.assets[0].uri);
     }
   };
+  const validate = () => {
+    if (!user.fullname) setError(fullname, "Họ tên không được bỏ trống !");
+    if (!user.username)
+      setError(username, "Tên người dùng không được bỏ trống !");
+    if (!user.email) setError(email, "Email không được bỏ trống !");
+    if (user.password !== user.confirmPass)
+      setError(password, "Mật khẩu không khớp");
+
+    if (error) return true;
+    else {
+      return false;
+    }
+  };
 
   const register = () => {
     const process = async () => {
@@ -65,12 +90,14 @@ const Register = ({ navigation }) => {
       });
 
       if (res.status === 201) navigation.navigate("Login");
+
+      if (validate) return false;
       else {
         console.log(res);
       }
     };
-
-    if (user.password !== user.confirmPass) setError("Mật khẩu không khớp");
+    if (user.password !== user.confirmPass)
+      setError(password, "Mật khẩu không khớp");
     else {
       process();
     }
@@ -79,12 +106,13 @@ const Register = ({ navigation }) => {
   return (
     <Provider>
       <View style={Styles.register_container}>
-        <TouchableOpacity style={Styles.label} onPress={pickAvatar}>
+        <TouchableOpacity style={Styles.register_avatar} onPress={pickAvatar}>
           {!avatar ? (
             <Avatar.Icon size={100} icon="account" />
           ) : (
             <Avatar.Image size={100} source={{ uri: avatar }} />
           )}
+          <Text style={{ marginTop: "2%" }}> Chọn avatar </Text>
         </TouchableOpacity>
         <TextInput
           style={Styles.input}
@@ -94,6 +122,7 @@ const Register = ({ navigation }) => {
           value={user.fullname}
           onChangeText={(e) => change(e, "fullname")}
         />
+        <HelperText type="error">{error.fullname}</HelperText>
         <TextInput
           style={Styles.input}
           mode="outlined"
@@ -102,6 +131,7 @@ const Register = ({ navigation }) => {
           value={user.email}
           onChangeText={(e) => change(e, "email")}
         />
+        <HelperText type="error">{error.email}</HelperText>
         <TextInput
           style={Styles.input}
           mode="outlined"
@@ -110,6 +140,7 @@ const Register = ({ navigation }) => {
           value={user.username}
           onChangeText={(e) => change(e, "username")}
         />
+        <HelperText type="error">{error.username}</HelperText>
         <TextInput
           style={Styles.input}
           mode="outlined"
@@ -119,6 +150,7 @@ const Register = ({ navigation }) => {
           onChangeText={(e) => change(e, "password")}
           secureTextEntry
         />
+        <HelperText type="error">{error.password}</HelperText>
         <TextInput
           style={Styles.input}
           mode="outlined"
@@ -128,7 +160,7 @@ const Register = ({ navigation }) => {
           onChangeText={(e) => change(e, "confirmPass")}
           secureTextEntry
         />
-
+        <HelperText type="error">{error.password}</HelperText>
         <View style={Styles.input}>
           <DropDown
             label={"Vai trò"}

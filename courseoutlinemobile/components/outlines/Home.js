@@ -9,21 +9,23 @@ import { Appbar, Card, Icon, Searchbar, Text } from "react-native-paper";
 import APIs, { endpoints } from "../../configs/APIs";
 import { MyUserContext } from "../../configs/Context";
 import Styles from "./Styles";
+import { useIsFocused } from "@react-navigation/native";
 
 const Home = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
-  const [outline, setOutline] = useState([]);
+  const [outlines, setOutlines] = useState([]);
   const [courses, setCourses] = useState([]);
   const [q, setQ] = useState("");
   const user = useContext(MyUserContext);
   const userId = user.id;
+  const isFocus = useIsFocused();
 
-  const loadOutline = async () => {
+  const loadOutlines = async () => {
     try {
       let url = `${endpoints["get_outlines"](userId)}?q=${q}`;
       let res = await APIs.get(url);
 
-      setOutline(res.data);
+      setOutlines(res.data);
     } catch (ex) {
       console.error(ex.response.data);
     }
@@ -51,9 +53,9 @@ const Home = ({ navigation }) => {
   };
 
   useEffect(() => {
-    loadOutline();
+    loadOutlines();
     loadCourses();
-  }, [refreshing, q]);
+  }, [refreshing, q, isFocus]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -73,7 +75,7 @@ const Home = ({ navigation }) => {
           <Icon source="hand-wave-outline" size={30} />
         </View>
 
-        {outline ? (
+        {!outlines ? (
           <Text>Chưa có đề cương nào...</Text>
         ) : (
           <View style={Styles.outline_container}>
@@ -83,32 +85,32 @@ const Home = ({ navigation }) => {
                 onChangeText={(t) => search(t, setQ)}
               />
             </View>
-            {outline.map((o) => (
+            {outlines.map((o) => (
               <TouchableOpacity key={o.id}>
-                <Card
-                  style={Styles.card}
-                  mode="outlined"
-                  onPress={() =>
-                    navigation.navigate("OutlineDetails", {
-                      outlineId: o.id,
-                    })
-                  }
-                >
-                  <Card.Title
-                    title={courses.find((c) => c.id === o.course).name}
-                  />
-                  <Card.Content>
-                    <Text>
-                      Khoa:{" "}
-                      {courses.find((c) => c.id === o.course).category.name}
-                    </Text>
-                    <Text>Số tín chỉ: {o.credit} </Text>
-
-                    <Text>
-                      Học kỳ: {courses.find((c) => c.id === o.course).term}
-                    </Text>
-                  </Card.Content>
-                </Card>
+                <View>
+                  {(() => {
+                    const course = courses.find((c) => c.id === o.course);
+                    if (!course) return false;
+                    return (
+                      <Card
+                        style={Styles.card}
+                        mode="outlined"
+                        onPress={() =>
+                          navigation.navigate("OutlineDetails", {
+                            outlineId: o.id,
+                          })
+                        }
+                      >
+                        <Card.Title title={course.name} />
+                        <Card.Content>
+                          <Text>Khoa: {course.category.name}</Text>
+                          <Text>Phương thức: {course.delivery_mode}</Text>
+                          <Text>Học kỳ: {course.term}</Text>
+                        </Card.Content>
+                      </Card>
+                    );
+                  })()}
+                </View>
               </TouchableOpacity>
             ))}
           </View>

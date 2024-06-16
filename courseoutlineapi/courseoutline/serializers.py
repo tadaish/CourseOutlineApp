@@ -9,6 +9,8 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class CourseSerializer(serializers.ModelSerializer):
+    delivery_mode = serializers.CharField(source='get_delivery_mode_display', read_only=True)
+
     class Meta:
         model = Course
         fields = '__all__'
@@ -71,12 +73,14 @@ class OutlineSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    role = serializers.CharField(source='get_role_display', read_only=True)
+
     def create(self, validated_data):
         data = validated_data.copy()
         u = User(**data)
         u.set_password(u.password)
         u.save()
-        
+
         return u
 
     def to_representation(self, instance):

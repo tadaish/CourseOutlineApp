@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-6@dt51_kw6i(*ob$sf747gtd0zhnv)$a=8p&#^p=t7+%khtk7j
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.6']
+ALLOWED_HOSTS = ['192.168.1.7']
 
 import cloudinary
 
